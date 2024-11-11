@@ -16,7 +16,7 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    // strict: true,
     deprecationErrors: true,
   }
 });
@@ -26,8 +26,24 @@ async function run() {
     const bookCollection = client.db('LibraryManagement').collection('books')
 
     app.post('/books', async (req, res) => {
-      const newBook = req.query;
-      console.log(newBook)
+      const newBook = req.body;
+      const result = await bookCollection.insertOne(newBook)
+      res.send(result)
+    })
+
+    app.get('/category', async (req, res) => {
+      const bookCategories = []
+      const category = await bookCollection.distinct('bookCategory')
+      const allBooks = await bookCollection.find().toArray()
+      category.map(async item => {
+        const findBook = allBooks.find(book => book.bookCategory == item)
+        if (findBook) {
+
+          bookCategories.push({ category: findBook?.bookCategory, image: findBook?.bookImage })
+        }
+      })
+      res.send(bookCategories)
+
     })
   } finally {
 
