@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 
 // middleware
 app.use(cors({
-  origin: ['http://localhost:5173','https://library-management-85bef.web.app/'],
+  origin: ['http://localhost:5173','https://library-management-85bef.web.app'],
   credentials: true,
 
 }))
